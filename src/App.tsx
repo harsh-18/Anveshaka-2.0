@@ -21,6 +21,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState<string>('Command Center');
+  const [manualDeficitReduction, setManualDeficitReduction] = useState<number>(0);
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newState = e.target.value;
@@ -31,9 +32,39 @@ export default function App() {
     } else {
       setSelectedDistrict('');
     }
+    setManualDeficitReduction(0);
   };
 
-  const metrics = useMemo(() => getMetricsByLocation(selectedState, selectedDistrict), [selectedState, selectedDistrict]);
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDistrict(e.target.value);
+    setManualDeficitReduction(0);
+  };
+
+  const baseMetrics = useMemo(() => getMetricsByLocation(selectedState, selectedDistrict), [selectedState, selectedDistrict]);
+
+  const metrics = useMemo(() => {
+    if (!baseMetrics) return null;
+    const newFacilities = baseMetrics.facilities.map(f => ({ ...f }));
+    if (newFacilities.length > 0 && manualDeficitReduction > 0) {
+      let remaining = manualDeficitReduction;
+      for (const f of newFacilities.sort((a,b) => b.bedsDeficitCount - a.bedsDeficitCount)) {
+        if (remaining <= 0) break;
+        if (f.bedsDeficitCount > 0) {
+          const deduct = Math.min(f.bedsDeficitCount, remaining);
+          f.bedsDeficitCount -= deduct;
+          remaining -= deduct;
+          if (f.bedsDeficitCount <= 0 && f.status === 'FULL') {
+            f.status = 'AVAIL';
+          }
+        }
+      }
+    }
+    return { ...baseMetrics, facilities: newFacilities };
+  }, [baseMetrics, manualDeficitReduction]);
+
+  const handleWorkflowAction = (reductionAmount: number) => {
+    setManualDeficitReduction(prev => prev + reductionAmount);
+  };
 
   const handleSendMessage = async (content: string) => {
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content };
@@ -109,7 +140,7 @@ export default function App() {
             <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5 block font-bold">Select District</label>
             <select
               value={selectedDistrict}
-              onChange={(e) => setSelectedDistrict(e.target.value)}
+              onChange={handleDistrictChange}
               className="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-lg p-2.5 focus:outline-none focus:border-blue-500 transition-colors shadow-inner cursor-pointer"
               disabled={availableDistricts.length === 0}
             >
@@ -175,7 +206,7 @@ export default function App() {
         ) : activeTab === 'Resource Map' ? (
           <ResourceMapView metrics={metrics} />
         ) : activeTab === 'Workflows' ? (
-          <WorkflowsView metrics={metrics} />
+          <WorkflowsView metrics={metrics} stateName={selectedState} onAction={handleWorkflowAction} />
         ) : (
           <div className="flex-1 p-6 flex flex-col items-center justify-center text-slate-500 space-y-4">
             <div className="text-6xl opacity-20">⚙️</div>

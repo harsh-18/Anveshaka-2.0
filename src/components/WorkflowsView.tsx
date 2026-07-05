@@ -4,14 +4,16 @@ import { DistrictMetrics } from '../services/indiaHealthDataService';
 
 interface Props {
   metrics: DistrictMetrics | null;
+  stateName: string;
+  onAction: (reduction: number) => void;
 }
 
-export default function WorkflowsView({ metrics }: Props) {
+export default function WorkflowsView({ metrics, stateName, onAction }: Props) {
   const [tasks, setTasks] = useState([
-    { id: 1, title: 'Dispatch Mobile Units', description: 'Reallocate 12 mobile clinical units to Bangarapet', status: 'completed', time: '10:45 AM' },
-    { id: 2, title: 'Alert Regional Logistics', description: 'Notify supply chain of projected 40% O2 demand increase', status: 'active', time: 'In Progress' },
-    { id: 3, title: 'Staff Reassignment', description: 'Approve shift extensions for ICU nurses at District GH', status: 'pending', time: '-' },
-    { id: 4, title: 'Public Advisory', description: 'Issue local SMS broadcast regarding respiratory symptoms', status: 'pending', time: '-' },
+    { id: 1, title: 'Dispatch Mobile Units', description: 'Reallocate 12 mobile clinical units to Bangarapet', status: 'active', time: 'Pending Action', resolutionValue: 20 },
+    { id: 2, title: 'Alert Regional Logistics', description: 'Notify supply chain of projected 40% O2 demand increase', status: 'active', time: 'In Progress', resolutionValue: 30 },
+    { id: 3, title: 'Staff Reassignment', description: 'Approve shift extensions for ICU nurses at District GH', status: 'pending', time: '-', resolutionValue: 15 },
+    { id: 4, title: 'Public Advisory', description: 'Issue local SMS broadcast regarding respiratory symptoms', status: 'pending', time: '-', resolutionValue: 0 },
   ]);
 
   useEffect(() => {
@@ -26,18 +28,26 @@ export default function WorkflowsView({ metrics }: Props) {
         { ...prevTasks[3], description: `Issue local SMS broadcast regarding respiratory symptoms in ${city}` },
       ]);
     }
-  }, [metrics]);
+  }, [metrics?.name]); // Dependency changed to metrics.name so it does not reset on deficit change
 
-  const toggleStatus = (id: number) => {
+  const handleActionClick = (id: number) => {
     setTasks(tasks.map(t => {
       if (t.id === id) {
-        if (t.status === 'pending') return { ...t, status: 'active', time: 'In Progress' };
-        if (t.status === 'active') return { ...t, status: 'completed', time: 'Just now' };
-        return { ...t, status: 'pending', time: '-' };
+        if (t.status !== 'completed') {
+          if (t.resolutionValue > 0) {
+            onAction(t.resolutionValue);
+          }
+          return { ...t, status: 'completed', time: 'Just now' };
+        }
       }
       return t;
     }));
   };
+
+  const totalDeficit = metrics ? metrics.facilities.reduce((acc, f) => acc + f.bedsDeficitCount, 0) : 0;
+  const isCritical = totalDeficit > 0;
+  const districtName = metrics ? metrics.name : 'Local';
+  const displayStateName = stateName || 'Regional';
 
   return (
     <div className="flex-1 p-6 flex gap-6 overflow-hidden">
@@ -60,7 +70,7 @@ export default function WorkflowsView({ metrics }: Props) {
                 task.status === 'active' ? 'bg-blue-50 border-blue-200 shadow-sm ring-1 ring-blue-500/20' :
                 'bg-white border-slate-200 hover:border-slate-300'
               }`}
-              onClick={() => toggleStatus(task.id)}
+              onClick={() => handleActionClick(task.id)}
             >
               <div className="mt-1">
                 {task.status === 'completed' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
@@ -70,6 +80,11 @@ export default function WorkflowsView({ metrics }: Props) {
               <div className="flex-1">
                 <h3 className={`font-bold text-base ${task.status === 'completed' ? 'text-slate-600 line-through' : 'text-slate-800'}`}>{task.title}</h3>
                 <p className="text-sm text-slate-500 mt-1">{task.description}</p>
+                {task.status === 'active' && task.resolutionValue > 0 && (
+                  <p className="text-xs text-blue-600 mt-2 font-medium bg-blue-50 inline-block px-2 py-1 rounded">
+                    Tap to manually approve & deploy (-{task.resolutionValue} deficit)
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
                 <Clock className="w-3.5 h-3.5" />
@@ -81,14 +96,37 @@ export default function WorkflowsView({ metrics }: Props) {
       </div>
       
       <div className="w-1/3 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl p-6 text-slate-300 flex flex-col shrink-0">
-        <h2 className="text-lg font-bold text-white mb-6">Workflow Triggers</h2>
+        <div className="flex justify-between items-start mb-6">
+          <h2 className="text-lg font-bold text-white">Workflow Triggers</h2>
+          {isCritical ? (
+            <span className="bg-rose-500/20 text-rose-400 text-xs px-2 py-1 rounded border border-rose-500/30 font-semibold tracking-wide">
+              STATUS: CRITICAL
+            </span>
+          ) : (
+            <span className="bg-emerald-500/20 text-emerald-400 text-xs px-2 py-1 rounded border border-emerald-500/30 font-semibold tracking-wide">
+              STATUS: RESOLVED
+            </span>
+          )}
+        </div>
         <div className="space-y-4 flex-1">
-           <div className="p-4 bg-slate-800 rounded-xl border border-slate-700/50">
+           <div className={`p-4 rounded-xl border ${isCritical ? 'bg-rose-950/30 border-rose-900/50' : 'bg-emerald-950/30 border-emerald-900/50'}`}>
              <div className="text-[10px] font-bold tracking-widest text-blue-400 uppercase mb-2">Trigger</div>
-             <p className="text-sm text-slate-200 mb-3">Facility status shifts to <strong className="text-rose-400">FULL</strong></p>
+             <p className="text-sm text-slate-200 mb-3">
+               {isCritical ? (
+                 <>{districtName} Facility status shifts to <strong className="text-rose-400">FULL</strong> (Capacity deficit crossed)</>
+               ) : (
+                 <>Capacity Restored in {districtName}</>
+               )}
+             </p>
              <ArrowRight className="w-4 h-4 text-slate-500 mb-3" />
              <div className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase mb-2">Action</div>
-             <p className="text-sm text-slate-400">Auto-dispatch available mobile units from nearest AVAIL zone.</p>
+             <p className="text-sm text-slate-400">
+               {isCritical ? (
+                 <>Auto-dispatch available mobile units from nearest available {displayStateName} health zone.</>
+               ) : (
+                 <strong className="text-emerald-400">Mobile Units Deployed - Monitoring active.</strong>
+               )}
+             </p>
            </div>
         </div>
       </div>
