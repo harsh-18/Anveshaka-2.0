@@ -1,24 +1,30 @@
 # Anveshaka 2.0 🧬 
 ### Smart Community Health Decision Intelligence Platform
 
-Anveshaka 2.0 is an advanced, full-stack Decision Intelligence application designed for local public health officials, city stakeholders, and community leads to tackle the critical challenge of healthcare resource fragmentation across India. 
+Anveshaka 2.0 is an advanced, full-stack Decision Intelligence application designed for local public health officials, city stakeholders, and community leads to tackle the critical challenge of healthcare access optimization across India.
 
-Built natively within the Google Cloud ecosystem using **Google AI Studio** and **Gemini 3 Flash**, the platform transforms multi-layered, chaotic public health parameters into localized, actionable, real-time insights through a responsive natural language interface.
+Built natively within the Google Cloud ecosystem using **Google AI Studio** and **Gemini 3 Flash**, the platform transforms multi-layered, chaotic public health parameters into localized, actionable intelligence.
+
+---
+
+## 🎥 Live Demo
+
+**[Watch the Live Demo on Loom](https://www.loom.com/share/02a863baa4a04f2da51f94c874319f1e)**
 
 ---
 
 ## 🚀 Key Features
 
-*   **Command Center & Dynamic Live Analytics:** Provides real-time tracking of critical metrics (like bed deficits and facility statuses) seamlessly scaling across all 28 States, 8 Union Territories, major metros, and capital cities.
+*   **Command Center & Dynamic Live Analytics:** Provides real-time tracking of critical metrics (like bed deficits and facility statuses) seamlessly scaling across all 28 States, 8 Union Territories, and 700+ health facilities.
 *   **Insight Lab (Predictive Forecasting):** Offers high-fidelity, deterministic visualizations comparing shifting respiratory surge events against localized supply-demand curves.
 *   **Automated Workflows:** A rule-based automation engine that triggers emergency dispatches, reallocates logistics, and reassigns staff instantly when local facilities hit maximum capacities.
-*   **Context-Bound Gemini Inference:** The conversational agent is dynamically coupled with the active geographic control panel. Changing your district or state parameters silently updates Gemini's system parameters for hyper-localized anomaly reasoning.
+*   **Context-Bound Gemini Inference:** The conversational agent is dynamically coupled with the active geographic control panel. Changing your district or state parameters silently updates Gemini's response context.
 
 ## 🛠️ Software Engineering & Architecture (S.O.L.I.D. Principles)
 
 To ensure long-term maintainability and modular scale, the codebase has been strictly refactored under modern software design patterns:
 *   **Single Responsibility Principle (SRP):** Complete decoupling of raw geographical data configurations, mathematical simulation matrix engines, and frontend React views.
-*   **Open/Closed Principle (OCP):** Built utilizing an Interface Adapter pattern. While the platform currently runs a localized high-fidelity simulation engine to mirror real-world data volatility without breaking, the data service layer is fully open to direct integration with external streaming endpoints (such as national **AI Kosh Developer Toolkits**) without rewriting UI components.
+*   **Open/Closed Principle (OCP):** Built utilizing an Interface Adapter pattern. While the platform currently runs a localized high-fidelity simulation engine to mirror real-world data volatility, the adapter allows future swaps to live APIs without UI changes.
 *   **Dependency Inversion:** Frontend dashboard components depend cleanly on abstracted data models rather than hardcoded local state objects.
 
 # Run and deploy your AI Studio app
