@@ -10,8 +10,8 @@ export default function ResourceMapView({ metrics }: Props) {
   if (!metrics) return null;
 
   return (
-    <div className="flex-1 p-6 overflow-y-auto">
-      <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-inner min-h-full flex flex-col relative">
+    <div className="flex-1 p-4 lg:p-6 overflow-y-auto overflow-x-hidden">
+      <div className="bg-slate-50 p-6 lg:p-8 rounded-3xl border border-slate-200 shadow-inner min-h-full flex flex-col relative">
         <div className="absolute top-6 left-6 flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200">
            <MapPin className="w-4 h-4 text-blue-500" />
            <span className="text-sm font-bold text-slate-700">Geospatial Distribution</span>

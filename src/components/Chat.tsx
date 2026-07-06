@@ -38,7 +38,7 @@ export default function Chat({ messages, isLoading, onSendMessage, onDispatchAle
   };
 
   return (
-    <div className="col-span-8 row-span-6 bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden relative">
+    <div className="w-full lg:flex-1 bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-x-hidden relative h-[500px] lg:h-auto">
       <div className="p-4 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center shrink-0">
         <div className="flex items-center space-x-3">
           <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
@@ -59,7 +59,7 @@ export default function Chat({ messages, isLoading, onSendMessage, onDispatchAle
         </button>
       </div>
 
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto overflow-x-hidden">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-4">
             <p className="text-sm font-medium">Intelligence Assistant Ready.</p>
@@ -68,7 +68,7 @@ export default function Chat({ messages, isLoading, onSendMessage, onDispatchAle
                 <button 
                   key={q}
                   onClick={() => onSendMessage(q)}
-                  className="bg-slate-800 border border-slate-700 rounded-full px-4 py-2 text-xs text-slate-400 hover:border-blue-500 hover:text-blue-400 transition-colors"
+                  className="bg-slate-800 border border-slate-700 rounded-full px-4 py-2 text-xs text-slate-400 hover:border-blue-500 hover:text-blue-400 transition-colors text-left"
                 >
                   {q}
                 </button>
@@ -89,10 +89,10 @@ export default function Chat({ messages, isLoading, onSendMessage, onDispatchAle
                 {msg.role === 'user' ? 'U' : 'G3'}
               </div>
               <div
-                className={`p-4 rounded-2xl text-sm max-w-[85%] leading-relaxed ${
+                className={`p-4 rounded-2xl text-sm max-w-[85%] leading-relaxed overflow-x-hidden ${
                   msg.role === 'user'
                     ? 'bg-slate-800 rounded-tl-none text-slate-300'
-                    : 'bg-blue-600 rounded-tr-none text-white shadow-xl prose prose-invert prose-sm'
+                    : 'bg-blue-600 rounded-tr-none text-white shadow-xl prose prose-invert prose-sm break-words'
                 }`}
               >
                 {msg.role === 'user' ? (

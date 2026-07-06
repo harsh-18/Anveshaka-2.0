@@ -50,8 +50,8 @@ export default function WorkflowsView({ metrics, stateName, onAction }: Props) {
   const displayStateName = stateName || 'Regional';
 
   return (
-    <div className="flex-1 p-6 flex gap-6 overflow-hidden">
-      <div className="w-2/3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
+    <div className="flex-1 p-4 lg:p-6 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-y-auto lg:overflow-hidden overflow-x-hidden">
+      <div className="w-full lg:w-2/3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-auto lg:h-full overflow-hidden shrink-0 lg:shrink">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
           <div>
             <h2 className="text-lg font-bold text-slate-800">Active Automation Workflows</h2>
@@ -95,7 +95,7 @@ export default function WorkflowsView({ metrics, stateName, onAction }: Props) {
         </div>
       </div>
       
-      <div className="w-1/3 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl p-6 text-slate-300 flex flex-col shrink-0">
+      <div className="w-full lg:w-1/3 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl p-6 text-slate-300 flex flex-col shrink-0">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-lg font-bold text-white">Workflow Triggers</h2>
           {isCritical ? (

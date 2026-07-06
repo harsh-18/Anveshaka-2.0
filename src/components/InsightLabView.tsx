@@ -85,8 +85,8 @@ export default function InsightLabView({ metrics }: Props) {
   }, [metrics]);
 
   return (
-    <div className="flex-1 p-6 flex flex-col space-y-6 overflow-y-auto custom-scrollbar">
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm shrink-0">
+    <div className="flex-1 p-4 lg:p-6 flex flex-col space-y-4 lg:space-y-6 overflow-y-auto overflow-x-hidden custom-scrollbar">
+      <div className="bg-white p-4 lg:p-6 rounded-2xl border border-slate-200 shadow-sm shrink-0">
         <h2 className="text-lg font-bold text-slate-800 mb-4">Predictive Forecasting: Respiratory Surges vs Supply Demand</h2>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -103,7 +103,7 @@ export default function InsightLabView({ metrics }: Props) {
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-6 shrink-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 shrink-0">
          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <h2 className="text-lg font-bold text-slate-800 mb-4">Current Facility Deficits</h2>
           <div className="h-48 w-full">

@@ -51,13 +51,56 @@ Base your responses on general public health knowledge and the hypothetical cont
         }
       }
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
-        contents,
-        config: {
-          systemInstruction,
-        },
-      });
+      let response;
+      let lastError;
+      const modelsToTry = ['gemini-3.5-flash', 'gemini-3.1-flash-lite'];
+
+      for (const currentModel of modelsToTry) {
+        let attempts = 3;
+        let delay = 500; // ms
+
+        for (let i = 0; i < attempts; i++) {
+          try {
+            console.log(`[Gemini API] Requesting ${currentModel}, attempt ${i + 1}/3...`);
+            response = await ai.models.generateContent({
+              model: currentModel,
+              contents,
+              config: {
+                systemInstruction,
+              },
+            });
+            break; // Success! Break the inner loop
+          } catch (err: any) {
+            lastError = err;
+            console.warn(`[Gemini API] Attempt ${i + 1} failed on ${currentModel}: ${err.message || err}`);
+            
+            const isTransient = err.status === 503 || err.status === 429 || 
+                                (err.message && (
+                                  err.message.includes('503') || 
+                                  err.message.includes('429') || 
+                                  err.message.includes('high demand') || 
+                                  err.message.includes('temporary') ||
+                                  err.message.includes('UNAVAILABLE')
+                                ));
+
+            if (isTransient && i < attempts - 1) {
+              console.log(`[Gemini API] Transient error. Retrying in ${delay}ms...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              delay *= 2;
+            } else {
+              break; // Not transient or out of attempts for this model. Move to fallback model.
+            }
+          }
+        }
+
+        if (response) {
+          break; // If we succeeded, break out of modelsToTry loop
+        }
+      }
+
+      if (!response) {
+        throw lastError || new Error('Failed to generate response after trying all fallback models and retries.');
+      }
 
       res.json({ reply: response.text });
     } catch (error: any) {

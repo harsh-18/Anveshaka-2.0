@@ -12,7 +12,7 @@ export default function Sidebar({ metrics }: SidebarProps) {
   const criticalCount = metrics.facilities.filter(f => f.status === 'FULL').length;
 
   return (
-    <div className="col-span-4 row-span-6 flex flex-col gap-4 overflow-y-auto pb-4 pr-2 custom-scrollbar">
+    <div className="w-full lg:w-1/3 flex flex-col gap-4 lg:overflow-y-auto lg:pb-4 lg:pr-2 custom-scrollbar shrink-0">
       {/* Card 1: Resource Deficit equivalent */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col shrink-0">
         <div className="flex justify-between items-start mb-2">

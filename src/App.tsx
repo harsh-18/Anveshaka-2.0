@@ -23,6 +23,8 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<string>('Command Center');
   const [manualDeficitReduction, setManualDeficitReduction] = useState<number>(0);
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newState = e.target.value;
     setSelectedState(newState);
@@ -116,64 +118,74 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-900">
-      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 shrink-0">
-        <div className="p-6 flex items-center space-x-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-white">A</div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Anveshaka 2.0</h1>
+    <div className="flex flex-col lg:flex-row w-full min-h-screen bg-slate-50 overflow-hidden font-sans text-slate-900">
+      <aside className="w-full lg:w-64 bg-slate-900 text-slate-300 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-800 shrink-0">
+        <div className="p-4 lg:p-6 flex items-center justify-between lg:justify-start space-x-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-white">A</div>
+            <h1 className="text-xl font-bold text-white tracking-tight">Anveshaka 2.0</h1>
+          </div>
+          <button 
+            className="lg:hidden p-2 text-slate-400 hover:text-white"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? '✕' : '☰'}
+          </button>
         </div>
 
-        <div className="px-6 py-2 space-y-4">
-          <div>
-            <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5 block font-bold">Select State</label>
-            <select
-              value={selectedState}
-              onChange={handleStateChange}
-              className="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-lg p-2.5 focus:outline-none focus:border-blue-500 transition-colors shadow-inner cursor-pointer"
-            >
-              {availableStates.map(state => (
-                <option key={state} value={state}>{state}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5 block font-bold">Select District</label>
-            <select
-              value={selectedDistrict}
-              onChange={handleDistrictChange}
-              className="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-lg p-2.5 focus:outline-none focus:border-blue-500 transition-colors shadow-inner cursor-pointer"
-              disabled={availableDistricts.length === 0}
-            >
-              {availableDistricts.map(district => (
-                <option key={district} value={district}>{district}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-2 mt-4">
-          {[
-            { id: 'Command Center', icon: '📊' },
-            { id: 'Insight Lab', icon: '🧬' },
-            { id: 'Resource Map', icon: '🗺️' },
-            { id: 'Workflows', icon: '⚙️' },
-          ].map(tab => (
-            <div 
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`p-3 rounded-lg flex items-center space-x-3 cursor-pointer transition-colors ${
-                activeTab === tab.id ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 text-slate-300'
-              }`}
-            >
-              <div className="w-5 h-5 opacity-70">{tab.icon}</div>
-              <span className="text-sm font-medium">{tab.id}</span>
+        <div className={`flex-1 flex flex-col ${isMobileMenuOpen ? 'block' : 'hidden lg:flex'}`}>
+          <div className="px-4 lg:px-6 py-2 space-y-4">
+            <div>
+              <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5 block font-bold">Select State</label>
+              <select
+                value={selectedState}
+                onChange={handleStateChange}
+                className="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-lg p-2.5 focus:outline-none focus:border-blue-500 transition-colors shadow-inner cursor-pointer"
+              >
+                {availableStates.map(state => (
+                  <option key={state} value={state}>{state}</option>
+                ))}
+              </select>
             </div>
-          ))}
-        </nav>
-        <div className="p-6 border-t border-slate-800">
-          <div className="bg-slate-800/50 p-3 rounded-xl">
-            <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Data Source</p>
-            <p className="text-xs text-blue-400">Public Health API v4.2</p>
+            <div>
+              <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5 block font-bold">Select District</label>
+              <select
+                value={selectedDistrict}
+                onChange={handleDistrictChange}
+                className="w-full bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-lg p-2.5 focus:outline-none focus:border-blue-500 transition-colors shadow-inner cursor-pointer"
+                disabled={availableDistricts.length === 0}
+              >
+                {availableDistricts.map(district => (
+                  <option key={district} value={district}>{district}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <nav className="flex-1 px-4 space-y-2 mt-4">
+            {[
+              { id: 'Command Center', icon: '📊' },
+              { id: 'Insight Lab', icon: '🧬' },
+              { id: 'Resource Map', icon: '🗺️' },
+              { id: 'Workflows', icon: '⚙️' },
+            ].map(tab => (
+              <div 
+                key={tab.id}
+                onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }}
+                className={`p-3 rounded-lg flex items-center space-x-3 cursor-pointer transition-colors ${
+                  activeTab === tab.id ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 text-slate-300'
+                }`}
+              >
+                <div className="w-5 h-5 opacity-70">{tab.icon}</div>
+                <span className="text-sm font-medium">{tab.id}</span>
+              </div>
+            ))}
+          </nav>
+          <div className="p-6 border-t border-slate-800">
+            <div className="bg-slate-800/50 p-3 rounded-xl">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Data Source</p>
+              <p className="text-xs text-blue-400">Public Health API v4.2</p>
+            </div>
           </div>
         </div>
       </aside>
@@ -192,7 +204,7 @@ export default function App() {
         </header>
 
         {activeTab === 'Command Center' ? (
-          <div className="flex-1 p-6 grid grid-cols-12 grid-rows-6 gap-4 overflow-hidden">
+          <div className="flex-1 p-4 lg:p-6 flex flex-col lg:flex-row gap-4 overflow-y-auto overflow-x-hidden lg:overflow-hidden">
             <Sidebar metrics={metrics} />
             <Chat 
               messages={messages} 
