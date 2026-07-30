@@ -25,7 +25,7 @@ To ensure long-term maintainability and modular scale, the codebase has been str
 
 This contains everything you need to run your app locally.
 
-Live app link: https://anveshaka-2-0-258208842022.asia-south1.run.app
+Live app link: https://ai.studio/apps/d634e92f-c8d4-4a88-8f62-ff0af9ac58fc
 
 ## Run Locally
 
